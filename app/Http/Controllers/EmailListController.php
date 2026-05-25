@@ -19,11 +19,13 @@ class EmailListController extends Controller
         $search = request()->search;
 
         $emailLists = EmailList::query()
+        ->withCount('subscribers')
         ->when($search, fn(Builder $query) => $query
         ->where('title', 'like', "%$search%")
         ->orWhere('id', '=', $search) 
         ) //responsavel pela pesquisa
-        ->paginate(10);
+        ->paginate(10)
+        ->appends(compact('search'));
 
         $emailLists->isNotEmpty();
 
