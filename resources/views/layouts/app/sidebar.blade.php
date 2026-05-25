@@ -16,6 +16,13 @@
                         {{ __('Dashboard') }}
                     </flux:sidebar.item>
                 </flux:sidebar.group>
+                <flux:sidebar.group :heading="__('Platform')" class="grid">
+                    <flux:sidebar.item icon="home" :href="route('email-list.index')" 
+                    :current="request()->routeIs('email-list.*')" 
+                    wire:navigate>
+                        {{ __('Email list') }}
+                    </flux:sidebar.item>
+                </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />
