@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\EmailList;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 
 class EmailListController extends Controller
 {
@@ -14,11 +16,20 @@ class EmailListController extends Controller
      */
     public function index()
     {   
-        $emailLists = EmailList::query()->paginate();
+        $search = request()->search;
+
+        $emailLists = EmailList::query()
+        ->when($search, fn(Builder $query) => $query
+        ->where('title', 'like', "%$search%")
+        ->orWhere('id', '=', $search) 
+        ) //responsavel pela pesquisa
+        ->paginate(10);
+
         $emailLists->isNotEmpty();
 
         return view('email-list.index', [
             'emailLists' => $emailLists,
+            'search' => $search
         ]);
     }
 
