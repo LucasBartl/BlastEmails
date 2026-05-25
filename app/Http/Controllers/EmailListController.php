@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\EmailList;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EmailListController extends Controller
 {
@@ -11,9 +13,12 @@ class EmailListController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
+    {   
+        $emailLists = EmailList::query()->paginate();
+        $emailLists->isNotEmpty();
+
         return view('email-list.index', [
-            'emailLists' => EmailList::query()->paginate(),
+            'emailLists' => $emailLists,
         ]);
     }
 
@@ -33,14 +38,35 @@ class EmailListController extends Controller
 
 
         /* Validações */
-        $data = $request->validate([
+        $request->validate([
             'title' => ['required', 'max:255'],
             'file' => ['required', 'file', 'mimes:csv'],
         ]);
 
-        $file = $request->file('file');
+        //Leitura do arquivo
+        $emails = $this->readCvsFile($request->file('file'));
 
-        //Abrindo o arquivo para leitura
+
+
+        //Criando uma transaction 
+        //Ela verifica se deu certo o processo, e se sim cria 
+        DB::transaction(function () use ($request, $emails) {
+
+            //Criando uma lista 
+            $emailList =  EmailList::query()->create([
+                'title' => $request->title
+            ]);
+            //Itens da lista 
+            $emailList->subscribers()->createMany($emails);
+        });
+        return to_route('email-list.index');
+    }
+
+    // Função de leitura 
+    private function readCvsFile(UploadedFile $file): array
+    {
+
+        //Abrindo o arquivo para leitura    
         $fileHandler = fopen($file->getRealPath(), 'r');
         $itens = [];
 
@@ -57,16 +83,7 @@ class EmailListController extends Controller
         }
         fclose($fileHandler);
 
-
-        //Criando uma lista 
-        $emailList =  EmailList::query()->create([
-            'title' => $request->title
-        ]);
-
-        //Itens da lista 
-        $emailList->subscribers()->createMany($itens);
-
-        return to_route('email-list.index');
+        return $itens;
     }
 
     /**
