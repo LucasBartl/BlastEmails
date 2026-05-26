@@ -29,7 +29,7 @@
                         <x-table.td>{{ $subscriber->name }}</x-table.td>
                         <x-table.td>{{ $subscriber->email }}</x-table.td>
 
-                        <x-table.td>
+                        <x-table.td >
                             @unless ($subscriber->trashed())
                                 <x-form :action="route('subscribers.destroy', [$emailList, $subscriber])" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
                                     <x-secondary-button type="submit">

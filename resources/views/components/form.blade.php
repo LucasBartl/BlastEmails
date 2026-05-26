@@ -1,14 +1,14 @@
 @props([
     'post' => null,
     'delete' => null,
-    'flat' => false
+    'put' => null,
+    'flat' => false,
 ])
 
 
 @php
 
-    $method = ($post  or $delete)?  'POST' : 'GET';
-    
+    $method = ($post or $delete or $put) ? 'POST' : 'GET';
 
 @endphp
 
@@ -19,6 +19,8 @@
     @if ($delete)
         @method('DELETE')
     @endif
-
+    @if ($put)
+        @method('PUT')
+    @endif
     {{ $slot }}
 </form>

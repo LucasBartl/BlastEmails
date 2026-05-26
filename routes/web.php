@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscribersController;
+use App\Http\Controllers\TemplateController;
 use App\Models\EmailList;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -47,6 +48,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/email-list/{emailList}/subscribers/create', [SubscribersController::class, 'store']);
 
     Route::delete('/email-list/{emailList}/subscribers/{subscriber}', [SubscribersController::class, 'destroy'])->name('subscribers.destroy');
+
+    //Metodo diferente de utilizarmos rotas (Nesse metodo o laravel já utiliza todos de uma vez) 
+
+    Route::resource('template', TemplateController::class);
+
 });
 
 require __DIR__ . '/settings.php';
