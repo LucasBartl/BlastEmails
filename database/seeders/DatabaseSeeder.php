@@ -16,25 +16,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        //Chamando todos os seeders criados 
+        $this->call([
+
+            UserSeeder::class,
+            EmailListSeeder::class,
+            TemplateSeeder::class,
+            CampaingSeeder::class
+
+
         ]);
-
-
-        EmailList::factory()
-        ->count(50)
-        ->create()
-        ->each(function(EmailList $list){
-            Subscriber::factory()
-            ->count(rand(
-                50,200
-            ))
-            ->create([
-                'email_list_id' => $list->id
-            ]);
-        });
     }
 }
