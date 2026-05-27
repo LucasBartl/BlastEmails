@@ -17,15 +17,10 @@ class TemplateController extends Controller
 
         return view('template.index', [
             'templates' => Template::query()
-                ->when($withTrash, fn(Builder $query) => $query->withTrashed())
-                ->when(
-                    $search,
-                    fn(Builder $query) => $query
-                        ->where('name', 'like', "%$search%")
-                        ->orWhere('id', '=', $search)
-                ) //responsavel pela pesquisa
+                ->when($withTrash, fn(Builder $query) => $query->withTrashed()) //Busca de usuário que foram deletados
+                ->when($search,fn(Builder $query) => $query->where('name', 'like', "%$search%")->orWhere('id', '=', $search)) //Busca pela pesquisa
                 ->paginate(10)
-                ->appends(compact('search')),
+                ->appends(compact('search')),//serve para manter parâmetros da URL durante paginação no Laravel.
             'search' => $search,
             'withTrash' => $withTrash
         ]);
@@ -44,6 +39,7 @@ class TemplateController extends Controller
         ]);
 
         //Chamando o model 
+        //Adiciona dentro do banco os dados dentro de $data 
         Template::create($data);
 
         return to_route('template.index')
@@ -57,7 +53,9 @@ class TemplateController extends Controller
 
     public function edit(Template $template)
     {
-        return view('template.edit', compact('template'));
+        return view('template.edit',[
+            'template' => $template
+        ]);
     }
 
     public function update(Request $request, Template $template)
@@ -67,7 +65,7 @@ class TemplateController extends Controller
             'body' => ['required']
         ]);
 
-        //Aqui diferente do create, estamos puxando as informações já existentes e preenchendo com as novas
+        //Aqui diferente do create, estamos puxando as informações já existentes e preenchendo com as novas que estão vindo da requisição
         $template->fill($data);
         $template->save();
         return back()

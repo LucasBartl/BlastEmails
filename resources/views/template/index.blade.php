@@ -1,4 +1,4 @@
-<x-layouts::app :title="__('Email List')">
+<x-layouts::app :title="__('Templates')">
     <x-h2>
         {{ __('Templates') }} 
     </x-h2>
@@ -27,7 +27,6 @@
                     <tr>
                         <x-table.td>{{ $template->id }}</x-table.td>
                         <x-table.td>{{ $template->name }}</x-table.td>
-                        <x-table.td>{{ $template->email }}</x-table.td>
 
                         <x-table.td class="flex space-x-4 ">
                             <x-link-button secondary :href="route('template.edit',$template)">Edit</x-link-button>
@@ -49,7 +48,6 @@
             </x-slot>
         </x-table>
 
-        {{ $templates->links() }}
-
+       
     </x-card>
 </x-layouts::app>
