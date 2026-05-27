@@ -9,7 +9,6 @@
             <x-link-button :href="route('template.create')">
                 {{ __('Add a new template') }}
             </x-link-button>
-
             <x-form :action="route('template.index')" class="w-2/5" x-data x-ref="form">
 
                 <x-checkbox-input :label="__('Show Deleted Records')" name="withTrash" value="1" @click="$refs.form.submit()"
@@ -29,11 +28,12 @@
                         <x-table.td>{{ $template->name }}</x-table.td>
 
                         <x-table.td class="flex space-x-4 ">
-                            <x-link-button secondary :href="route('template.edit',$template)">Edit</x-link-button>
+                            <x-link-button secondary :href="route('template.show',$template)">{{__('Preview')}}</x-link-button>
+                            <x-link-button secondary :href="route('template.edit',$template)">{{__('Edit')}}</x-link-button>
                             @unless ($template->trashed())
                                 <x-form :action="route('template.destroy', $template)" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
                                     <x-secondary-button type="submit">
-                                        Delete
+                                        {{__('Delete')}}
                                     </x-secondary-button>
                                 </x-form>
                             @else

@@ -4,9 +4,9 @@
     ])
 
 <span {{$attributes->class([
-    'rounded-xl w-fit border px-2 py-1 text-xs font-medium text-slate-100',
+    'rounded-xl w-fit border px-2 py-1 text-xs font-medium text-slate-100 flex  items-center',
     'border-red-700 bg-red-700 dark:border-red-600 dark:bg-red-600' => $danger,
-    'border-amber-700 bg-amber-700 dark:border-amber-600 dark:bg-amber-600' => $warning,
+    'border-amber-700 bg-amber-700 dark:border-amber-600 dark:bg-amber-600 ' => $warning,
     ])
     }}
     >
