@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscribersController;
 use App\Http\Controllers\TemplateController;
@@ -52,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Metodo diferente de utilizarmos rotas (Nesse metodo o laravel já utiliza todos de uma vez) 
 
     Route::resource('template', TemplateController::class);
-
+    Route::resource('campaigns', CampaignController::class);
 });
 
 require __DIR__ . '/settings.php';

@@ -14,22 +14,24 @@
         </flux:sidebar.header>
 
         <flux:sidebar.nav>
+
             <flux:sidebar.group :heading="__('Platform')" class="grid">
                 <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')"
                     wire:navigate>
                     {{ __('Dashboard') }}
                 </flux:sidebar.item>
-            </flux:sidebar.group>
-            <flux:sidebar.group :heading="__('Platform')" class="grid">
                 <flux:sidebar.item icon="home" :href="route('email-list.index')"
                     :current="request()->routeIs('email-list.*')" wire:navigate>
                     {{ __('Email list') }}
                 </flux:sidebar.item>
-            </flux:sidebar.group>
-            <flux:sidebar.group :heading="__('Platform')" class="grid">
+
                 <flux:sidebar.item icon="home" :href="route('template.index')"
                     :current="request()->routeIs('template.*')" wire:navigate>
                     {{ __('Templates') }}
+                </flux:sidebar.item>
+                <flux:sidebar.item icon="home" :href="route('campaigns.index')"
+                    :current="request()->routeIs('campaigns.*')" wire:navigate>
+                    {{ __('Campaigns') }}
                 </flux:sidebar.item>
             </flux:sidebar.group>
         </flux:sidebar.nav>

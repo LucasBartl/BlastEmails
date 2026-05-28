@@ -22,7 +22,7 @@ class CampaingFactory extends Factory
             'template_id' => Template::factory(),
             'track_click' => fake()->boolean,
             'track_open' => fake()->boolean,
-            'body' => fake()->randomHtml,
+            'body' =>fake()->sentences(3,true),
             'created_at' => fake()->dateTimeBetween('-7 days', 'now'),
             'updated_at' => fake()->dateTimeBetween('-7 days', 'now'),
             'deleted_at' => fake()->boolean ? fake()->dateTimeBetween('-7 days', 'now') : null,
