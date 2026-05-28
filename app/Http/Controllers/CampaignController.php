@@ -23,4 +23,10 @@ class CampaignController extends Controller
             'withTrash' => $withTrash
         ]);
     }
+    public function destroy(Campaing $campaign)
+    {
+        $campaign->delete();
+
+        return back()->with('message', __('Campaing sussccefully deleted!'));
+    }
 }
