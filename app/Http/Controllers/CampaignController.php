@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Campaing;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class CampaignController extends Controller
 {
@@ -31,9 +32,21 @@ class CampaignController extends Controller
     }
     public function restore(Campaing $campaign)
     {
-       
+
         $campaign->restore();
 
         return back()->with('message', __('Campaing sussccefully restored!'));
+    }
+    public function create(String $tab = null)
+    {
+
+        return view('campaigns.create', [ 
+            'tab' => $tab
+        ]);
+    }
+    public function store(Request $request)
+    {
+
+        $data = $request->validate([]);
     }
 }

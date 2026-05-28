@@ -19,8 +19,6 @@ Route::get('/', function () {
     Auth::loginUsingId(1);
     return to_route('dashboard');
 })->name('home');
-
-
 Route::middleware('guest')->group(function () {
 
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
@@ -35,7 +33,6 @@ Route::middleware('guest')->group(function () {
     Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
     Route::post('reset-password', [NewPasswordController::class, 'store'])->name('password.store');
 });
-
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::view('/dashboard', 'dashboard')->name('dashboard');
@@ -53,7 +50,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //Metodo diferente de utilizarmos rotas (Nesse metodo o laravel já utiliza todos de uma vez) 
 
     Route::resource('template', TemplateController::class);
-    Route::resource('campaigns', CampaignController::class);
+    Route::resource('campaigns', CampaignController::class)->only(['index', 'destroy']);
     /* 
         Utilizando desse jeito o $campaign traria somente o número (ID)
         Route::patch('/campaigns/{{$campaign}}/restore',[ CampaignController::class, 'restore'])->name('campaigns.restore');
@@ -61,6 +58,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Utilizando o metodo withTrashed, nos trazemos todos os dados da campaign
     Route::patch('/campaigns/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaigns.restore');
+
+    //O sinal de interrogação significa que o parametro é opcional
+    Route::get('/campaigns/create/{tab?}', [CampaignController::class, 'create'])->name('campaigns.create');
+
 });
 
 require __DIR__ . '/settings.php';
