@@ -3,12 +3,13 @@
     'delete' => null,
     'put' => null,
     'flat' => false,
+    'patch'=> false
 ])
 
 
 @php
 
-    $method = ($post or $delete or $put) ? 'POST' : 'GET';
+    $method = ($post or $patch or $delete or $put) ? 'POST' : 'GET';
 
 @endphp
 
@@ -21,6 +22,9 @@
     @endif
     @if ($put)
         @method('PUT')
+    @endif
+    @if ($patch)
+        @method('PATCH')
     @endif
     {{ $slot }}
 </form>

@@ -43,7 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/email-list', [EmailListController::class, 'index'])->name('email-list.index');
     Route::get('/email-list/create', [EmailListController::class, 'create'])->name('email-list.create');
     Route::post('/email-list/create', [EmailListController::class, 'store'])->name('email-list.store');
-    
+
     Route::get('/email-list/{emailList}/subscribers', [SubscribersController::class, 'index'])->name('subscribers.index');
     Route::get('/email-list/{emailList}/subscribers/create', [SubscribersController::class, 'create'])->name('subscribers.create');
     Route::post('/email-list/{emailList}/subscribers/create', [SubscribersController::class, 'store']);
@@ -54,6 +54,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('template', TemplateController::class);
     Route::resource('campaigns', CampaignController::class);
+    /* 
+        Utilizando desse jeito o $campaign traria somente o número (ID)
+        Route::patch('/campaigns/{{$campaign}}/restore',[ CampaignController::class, 'restore'])->name('campaigns.restore');
+     */
+
+    //Utilizando o metodo withTrashed, nos trazemos todos os dados da campaign
+    Route::patch('/campaigns/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaigns.restore');
 });
 
 require __DIR__ . '/settings.php';

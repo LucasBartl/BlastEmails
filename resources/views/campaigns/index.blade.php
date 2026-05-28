@@ -1,6 +1,6 @@
 <x-layouts::app :title="__('campaigns')">
     <x-h2>
-        {{ __('Campaigns') }} 
+        {{ __('Campaigns') }}
     </x-h2>
 
     <x-card class="space-y-4">
@@ -29,12 +29,19 @@
 
                         <x-table.td class="flex space-x-4 ">
                             @unless ($campaign->trashed())
-                                <x-form :action="route('campaigns.destroy', $campaign)" delete flat onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                <x-form :action="route('campaigns.destroy', $campaign)" delete flat
+                                    onsubmit="return confirm('{{ __('Are you sure?') }}')">
                                     <x-secondary-button type="submit">
-                                        {{__('Delete')}}
+                                        {{ __('Delete') }}
                                     </x-secondary-button>
                                 </x-form>
                             @else
+                                <x-form :action="route('campaigns.restore', $campaign)" patch  flat
+                                    onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                                    <x-secondary-button type="submit">
+                                        {{ __('Restore') }}
+                                    </x-secondary-button>
+                                </x-form>
                                 <x-danger danger>
                                     {{ __('Deleted') }}
                                 </x-danger>
@@ -46,6 +53,6 @@
             </x-slot>
         </x-table>
 
-       
+
     </x-card>
 </x-layouts::app>

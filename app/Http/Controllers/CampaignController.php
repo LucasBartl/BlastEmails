@@ -18,7 +18,7 @@ class CampaignController extends Controller
                 ->when($withTrash, fn(Builder $query) => $query->withTrashed()) //Busca de usuário que foram deletados
                 ->when($search, fn(Builder $query) => $query->where('name', 'like', "%$search%")->orWhere('id', '=', $search)) //Busca pela pesquisa
                 ->paginate(10)
-                ->appends(compact('search')), //serve para manter parâmetros da URL durante paginação no Laravel.
+                ->appends(compact('search', 'withTrash')), //serve para manter parâmetros da URL durante paginação no Laravel.
             'search' => $search,
             'withTrash' => $withTrash
         ]);
@@ -28,5 +28,12 @@ class CampaignController extends Controller
         $campaign->delete();
 
         return back()->with('message', __('Campaing sussccefully deleted!'));
+    }
+    public function restore(Campaing $campaign)
+    {
+       
+        $campaign->restore();
+
+        return back()->with('message', __('Campaing sussccefully restored!'));
     }
 }
