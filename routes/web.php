@@ -61,7 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //O sinal de interrogação significa que o parametro é opcional
     Route::get('/campaigns/create/{tab?}', [CampaignController::class, 'create'])->name('campaigns.create');
-
+    Route::post('/campaigns/create/{tab?}', [CampaignController::class, 'store']);
 });
 
 require __DIR__ . '/settings.php';
