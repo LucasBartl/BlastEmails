@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CampaignStoreRequest;
 use App\Models\Campaing;
+use App\Models\EmailList;
+use App\Models\Template;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Traits\Conditionable;
 
 class CampaignController extends Controller
 {
+    use Conditionable; // Importando metodos de condicionais 
     public function index()
     {
 
@@ -43,38 +47,47 @@ class CampaignController extends Controller
 
         //session()->forget('campaing::create');   -> matar sessão 
 
-        return view('campaigns.create', [
-            'tab' => $tab,
-
-            'form' => match ($tab) {
-                'template' => '_template',
-                'schedule' => '_schedule',
-                default => '_config'
-            },
-            'data' => session()->get('campaigns::create', [
-                'name' => null,
-                'subject' => null,
-                'email_list_id' => null,
-                'template_id' => null,
-                'body' => null,
-                'track_click' => null,
-                'track_open' => null,
-                'send_at' => null
-            ])
-
-        ]);
+        return view('campaigns.create', array_merge(
+            $this->when(
+                blank($tab),
+                fn() =>
+                [
+                    'email_lists' => EmailList::all(),
+                    'templates' => Template::all(),
+                ],
+                fn() => []
+            ),
+            [
+                'tab' => $tab,
+                'form' => match ($tab) {
+                    'template' => '_template',
+                    'schedule' => '_schedule',
+                    default => '_config'
+                },
+                'data' => session()->get('campaigns::create', [
+                    'name' => null,
+                    'subject' => null,
+                    'email_list_id' => null,
+                    'template_id' => null,
+                    'body' => null,
+                    'track_click' => null,
+                    'track_open' => null,
+                    'send_at' => null
+                ])
+            ]
+        ));
     }
     public function store(CampaignStoreRequest $request, ?String $tab = null)
     {
 
-        
+
         $data = $request->getData();
         $toRoute = $request->getToRoute();
-        
+
 
         //Salvando 
-        if($tab == 'schedule'){
-        Campaing::create($data);
+        if ($tab == 'schedule') {
+            Campaing::create($data);
         }
 
 
