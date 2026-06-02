@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Template;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -61,6 +62,15 @@ class CampaignStoreRequest extends FormRequest
                 $session[$key] = $newValue;
             }
         }
+         
+        
+        if($tempateID = $session['template_id'] && blank($session['body'])){
+            //find() -> método usado para buscar um registro pelo ID da chave primária (
+            $template = Template::find($tempateID);
+            //Passando para o body o valor de template body
+            $session['body'] = $template->body; 
+        }
+
 
         session()->put('campaigns::create', $session);
         return $rules;
