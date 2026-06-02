@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\Template;
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CampaignStoreRequest extends FormRequest
@@ -21,7 +20,8 @@ class CampaignStoreRequest extends FormRequest
             'body' => null,
             'track_click' => null,
             'track_open' => null,
-            'send_at' => null
+            'send_at' => null,
+            'send_when' => null
         ], request()->all());
 
 
@@ -48,9 +48,17 @@ class CampaignStoreRequest extends FormRequest
             ];
         }
         if ($tab == 'schedule') {
-            $rules = [
-                'send_at' => ['date'],
-            ];
+            if ($map['send_when'] == 'now') {
+                $map['send_at'] = now()->format('y-m-d');
+            } else if ($map['send_when'] == 'later') {
+                $rules = [
+                    'send_at' => ['required', 'date', 'after:today'],
+                ];
+            } else {
+                $rules = [
+                    'send_at' => ['send_when' => 'required'],
+                ];
+            }
         }
 
         $session = session('campaigns::create', $map);
@@ -62,13 +70,13 @@ class CampaignStoreRequest extends FormRequest
                 $session[$key] = $newValue;
             }
         }
-         
-        
-        if($tempateID = $session['template_id'] && blank($session['body'])){
+
+
+        if ($tempateID = $session['template_id'] && blank($session['body'])) {
             //find() -> método usado para buscar um registro pelo ID da chave primária (
             $template = Template::find($tempateID);
             //Passando para o body o valor de template body
-            $session['body'] = $template->body; 
+            $session['body'] = $template->body;
         }
 
 
@@ -78,22 +86,22 @@ class CampaignStoreRequest extends FormRequest
     public function getData()
     {
         $session = session()->get('campaigns::create');
+        
         unset($session['_token']);
+        unset($session['send_when']);
         return $session;
     }
-    public function getToRoute(){
+    public function getToRoute()
+    {
         $tab = $this->route('tab');
 
         if (blank($tab)) {
             return route('campaigns.create', ['tab' => 'template']);
-
         }
-        if($tab == 'template') { 
+        if ($tab == 'template') {
             return  route('campaigns.create', ['tab' => 'schedule']);
         }
 
         return route('campaigns.index');
-
-        
     }
 }
