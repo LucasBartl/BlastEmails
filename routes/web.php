@@ -4,6 +4,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscribersController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Middleware\CampaignCreateSessionControl;
 use App\Models\EmailList;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -60,7 +61,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/campaigns/{campaign}/restore', [CampaignController::class, 'restore'])->withTrashed()->name('campaigns.restore');
 
     //O sinal de interrogação significa que o parametro é opcional
-    Route::get('/campaigns/create/{tab?}', [CampaignController::class, 'create'])->name('campaigns.create');
+    Route::get('/campaigns/create/{tab?}', [CampaignController::class, 'create'])
+        ->middleware(CampaignCreateSessionControl::class)
+        ->name('campaigns.create');
+
     Route::post('/campaigns/create/{tab?}', [CampaignController::class, 'store']);
 });
 
