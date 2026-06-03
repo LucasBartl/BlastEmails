@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CampaignStoreRequest;
 use App\Models\Campaing;
 use App\Models\EmailList;
+use App\Models\Subscriber;
 use App\Models\Template;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -47,36 +48,46 @@ class CampaignController extends Controller
 
         //session()->forget('campaing::create');   -> matar sessão 
 
-        return view('campaigns.create', array_merge(
-            $this->when(
-                blank($tab),
-                fn() =>
+        $data = session()->get('campaigns::create', [
+            'name' => null,
+            'subject' => null,
+            'email_list_id' => null,
+            'template_id' => null,
+            'body' => null,
+            'track_click' => null,
+            'track_open' => null,
+            'send_at' => null,
+            'send_when' => null
+        ]);
+
+        return view(
+            'campaigns.create',
+            array_merge(
+
+                $this->when(
+                    blank($tab),
+                    fn() =>
+                    [
+                        'email_lists' => EmailList::all(),
+                        'templates' => Template::all(),
+                    ],
+                    fn() => []
+                ),
+                $this->when($tab == 'schedule', fn() => [
+                    'countEmails' => EmailList::find($data['email_list_id'])->subscribers()->count(),
+                    'template' => Template::find($data['template_id'])->name
+                ], fn() => []),
                 [
-                    'email_lists' => EmailList::all(),
-                    'templates' => Template::all(),
-                ],
-                fn() => []
-            ),
-            [
-                'tab' => $tab,
-                'form' => match ($tab) {
-                    'template' => '_template',
-                    'schedule' => '_schedule',
-                    default => '_config'
-                },
-                'data' => session()->get('campaigns::create', [
-                    'name' => null,
-                    'subject' => null,
-                    'email_list_id' => null,
-                    'template_id' => null,
-                    'body' => null,
-                    'track_click' => null,
-                    'track_open' => null,
-                    'send_at' => null,
-                    'send_when' => null
-                ])
-            ]
-        ));
+                    'tab' => $tab,
+                    'form' => match ($tab) {
+                        'template' => '_template',
+                        'schedule' => '_schedule',
+                        default => '_config'
+                    },
+                    'data' => $data,
+                ]
+            )
+        );
     }
     public function store(CampaignStoreRequest $request, ?String $tab = null)
     {

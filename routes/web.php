@@ -5,8 +5,11 @@ use App\Http\Controllers\EmailListController;
 use App\Http\Controllers\SubscribersController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Middleware\CampaignCreateSessionControl;
+use App\Mail\EmailCampaign;
+use App\Models\Campaing;
 use App\Models\EmailList;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
@@ -66,6 +69,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('campaigns.create');
 
     Route::post('/campaigns/create/{tab?}', [CampaignController::class, 'store']);
+
+    Route::get('/campaigns/{campaign}/emails', function (Campaing $campaign) {
+
+        //Processo de envio para todos os subscribers 
+        //Foreach vai percorrer a lista correspondete a campain id, e vai mapear os subscribers existente e realizar o envio
+        foreach ($campaign->emailList->subscribers as $subscriber) {
+            Mail::to($subscriber->email)->send(new EmailCampaign($campaign));
+        }
+        return (new EmailCampaign($campaign))->render();
+    });
 });
 
 require __DIR__ . '/settings.php';
